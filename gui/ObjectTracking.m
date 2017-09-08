@@ -22,7 +22,7 @@ function varargout = ObjectTracking(varargin)
 
 % Edit the above text to modify the response to help ObjectTracking
 
-% Last Modified by GUIDE v2.5 07-Sep-2017 12:01:24
+% Last Modified by GUIDE v2.5 07-Sep-2017 23:14:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -119,3 +119,10 @@ function togglebutton_stop_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of togglebutton_stop
+
+
+% --- Executes on button press in pushbutton_iterate.
+function pushbutton_iterate_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_iterate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

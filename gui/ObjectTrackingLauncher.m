@@ -27,6 +27,7 @@ classdef ObjectTrackingLauncher < handle
             
             set(this.handles.pushbutton_next,'callback', @this.pushbutton_next_callback);
             set(this.handles.pushbutton_select,'callback', @this.pushbutton_select_callback);
+            set(this.handles.pushbutton_iterate,'callback', @this.pushbutton_iterate_callback);
             set(this.handles.togglebutton_play,'callback', @this.togglebutton_play_callback);
             
             %data = {'' ; ''; ''};
@@ -85,20 +86,20 @@ classdef ObjectTrackingLauncher < handle
             start_pos = round(this.click_position_start);
             end_pos = round(this.click_position_end);
             this.current_frame_copy = this.current_frame;
-                        
+            
             line_width = 3;
             %Lin
             this.current_frame_copy(start_pos(2):start_pos(2)+line_width, start_pos(1):end_pos(1), :) = 255; %|o
             this.current_frame_copy(end_pos(2)-line_width:end_pos(2), start_pos(1):end_pos(1), :) = 255; %o|
             this.current_frame_copy(start_pos(2):end_pos(2), start_pos(1):start_pos(1)+line_width, :) = 255; %ó
             this.current_frame_copy(start_pos(2):end_pos(2), end_pos(1)-line_width:end_pos(1), :) = 255; %_o
-
+            
             %Lout
             this.current_frame_copy(start_pos(2)-line_width:start_pos(2), start_pos(1):end_pos(1), :) = 0; %|o
             this.current_frame_copy(end_pos(2):end_pos(2)+line_width, start_pos(1):end_pos(1), :) = 0; %o|
             this.current_frame_copy(start_pos(2):end_pos(2), start_pos(1)-line_width:start_pos(1), :) = 0; %ó
             this.current_frame_copy(start_pos(2):end_pos(2), end_pos(1):end_pos(1)+line_width, :) = 0; %_o
-
+            
             image(this.current_frame_copy, 'Parent', this.handles.axes_image);
             clean_axes(this.handles.axes_image);
             
@@ -121,10 +122,15 @@ classdef ObjectTrackingLauncher < handle
             set(this.handles.togglebutton_play, 'Value', 0);
             set(this.handles.togglebutton_stop, 'Value', 0);
         end
-        
+       
+        function pushbutton_iterate_callback(this, varargin)
+            
+        end
     end
     methods (Static)
         InitVariables(this);
+        SwitchIn(this, x, y, c);
+        SwitchOut(this, x, y, c);
     end
 end
 
