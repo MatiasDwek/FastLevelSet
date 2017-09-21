@@ -22,7 +22,7 @@ function varargout = ObjectTracking(varargin)
 
 % Edit the above text to modify the response to help ObjectTracking
 
-% Last Modified by GUIDE v2.5 07-Sep-2017 23:14:08
+% Last Modified by GUIDE v2.5 21-Sep-2017 15:55:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -126,3 +126,30 @@ function pushbutton_iterate_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_iterate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in radiobutton_l1norm.
+function radiobutton_l1norm_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton_l1norm (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton_l1norm
+
+
+% --- Executes on button press in radiobutton_l2norm.
+function radiobutton_l2norm_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton_l2norm (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton_l2norm
+
+
+% --- Executes on button press in radiobutton_gaussian.
+function radiobutton_gaussian_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton_gaussian (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton_gaussian

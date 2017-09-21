@@ -17,6 +17,9 @@ classdef ObjectTrackingLauncher < handle
         F; %evolution speed
         Lin; %neighboring pixels in
         Lout; %neighboring pixels out
+        
+        %Algorithm parameters
+        distribution;
     end
     
     methods
@@ -29,6 +32,9 @@ classdef ObjectTrackingLauncher < handle
             set(this.handles.pushbutton_select,'callback', @this.pushbutton_select_callback);
             set(this.handles.pushbutton_iterate,'callback', @this.pushbutton_iterate_callback);
             set(this.handles.togglebutton_play,'callback', @this.togglebutton_play_callback);
+            set(this.handles.radiobutton_l1norm,'callback', @this.radiobutton_l1norm);
+            set(this.handles.radiobutton_l2norm,'callback', @this.radiobutton_l2norm);
+            set(this.handles.radiobutton_gaussian,'callback', @this.radiobutton_gaussian);
             
             %data = {'' ; ''; ''};
             %set(this.handles.uitable_H1,'Data',data);
@@ -44,6 +50,8 @@ classdef ObjectTrackingLauncher < handle
             axes(this.handles.axes_image);
             image(this.current_frame,'Parent',this.handles.axes_image);
             clean_axes(this.handles.axes_image);
+            
+            this.distribution = L1Norm;
             
         end
         
@@ -122,15 +130,28 @@ classdef ObjectTrackingLauncher < handle
             set(this.handles.togglebutton_play, 'Value', 0);
             set(this.handles.togglebutton_stop, 'Value', 0);
         end
+        
+        function radiobutton_l1norm(this, varargin)
+            this.distribution = L1Norm;
+        end
+        
+        function radiobutton_l2norm(this, varargin)
+            this.distribution = L2Norm;
+        end
+        
+        function radiobutton_gaussian(this, varargin)
+            this.distribution = Gaussian;
+        end
        
         function pushbutton_iterate_callback(this, varargin)
-            
+            IterationStep(this);
         end
     end
     methods (Static)
         InitVariables(this);
         SwitchIn(this, x, y, c);
         SwitchOut(this, x, y, c);
+        IterationStep(this);
     end
 end
 

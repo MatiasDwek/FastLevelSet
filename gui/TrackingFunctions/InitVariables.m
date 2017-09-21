@@ -1,26 +1,26 @@
 function InitVariables(this)
-this.phi = ones(size(this.current_frame));
+this.phi = int8(ones(size(this.current_frame)));
 
 start_pos = round(this.click_position_start);
 end_pos = round(this.click_position_end);
 
 %exterior pixels
-this.phi = this.phi*-3;
+this.phi = this.phi*int8(PhiTypes.Exterior_pixel);
 
 %interior pixels
-this.phi(start_pos(2)+1:end_pos(2)-1, start_pos(1)+1:end_pos(1)-1, :) = 3;
+this.phi(start_pos(2)+1:end_pos(2)-1, start_pos(1)+1:end_pos(1)-1, :) = int8(PhiTypes.Interior_pixel);
 
 %Lin pixels
-this.phi(start_pos(2), start_pos(1):end_pos(1), :) = -1; %|o
-this.phi(end_pos(2), start_pos(1):end_pos(1), :) = -1; %o|
-this.phi(start_pos(2):end_pos(2), start_pos(1), :) = -1; %ó
-this.phi(start_pos(2):end_pos(2), end_pos(1), :) = -1; %_o
+this.phi(start_pos(2), start_pos(1):end_pos(1), :) = int8(PhiTypes.Lin_pixel); %|o
+this.phi(end_pos(2), start_pos(1):end_pos(1), :) = int8(PhiTypes.Lin_pixel); %o|
+this.phi(start_pos(2):end_pos(2), start_pos(1), :) = int8(PhiTypes.Lin_pixel); %ó
+this.phi(start_pos(2):end_pos(2), end_pos(1), :) = int8(PhiTypes.Lin_pixel); %_o
 
 %Lout pixels
-this.phi(start_pos(2)-1, start_pos(1):end_pos(1), :) = 1; %|o
-this.phi(end_pos(2)+1, start_pos(1):end_pos(1), :) = 1; %o|
-this.phi(start_pos(2):end_pos(2), start_pos(1)-1, :) = 1; %ó
-this.phi(start_pos(2):end_pos(2), end_pos(1)+1, :) = 1; %_o
+this.phi(start_pos(2)-1, start_pos(1):end_pos(1), :) = int8(PhiTypes.Lout_pixel); %|o
+this.phi(end_pos(2)+1, start_pos(1):end_pos(1), :) = int8(PhiTypes.Lout_pixel); %o|
+this.phi(start_pos(2):end_pos(2), start_pos(1)-1, :) = int8(PhiTypes.Lout_pixel); %ó
+this.phi(start_pos(2):end_pos(2), end_pos(1)+1, :) = int8(PhiTypes.Lout_pixel); %_o
 
 %Lin structure
 this.Lin = zeros(size(this.current_frame));
