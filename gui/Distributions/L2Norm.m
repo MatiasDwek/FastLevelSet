@@ -1,7 +1,7 @@
 classdef L2Norm < DistributionFunction
     methods
         function p = pdfeval(~, mu, v, k)
-            p = 1 - norm(mu-v, 2)/(256*k);
+            p = 1 - norm(squeeze(mu-v), 2)/(256*k);
         end
     end
     

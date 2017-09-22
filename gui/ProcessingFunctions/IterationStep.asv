@@ -11,10 +11,10 @@ image(image_Lout, 'Parent', this.handles.axes_image);
 image(image_exterior, 'Parent', this.handles.axes_image);
 image(image_interior, 'Parent', this.handles.axes_image);
 
-mu_interior = mean(mean(nonzeros(image_interior)));
-mu_exterior = mean(mean(nonzeros(image_exterior)));
+mu_interior = mean(mean(nonzeros(image_Lin)));
+mu_exterior = mean(mean(nonzeros(image_Lout)));
 
-this.current_frame_copy =this.current_frame_copy*0 + mu_interior;
+this.current_frame_copy =this.current_frame_copy*0 + round(mu_interior);
 image(this.current_frame_copy, 'Parent', this.handles.axes_image);
 
 this.current_frame_copy = this.current_frame_copy*0 + mu_exterior;
