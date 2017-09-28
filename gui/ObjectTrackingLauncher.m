@@ -12,6 +12,9 @@ classdef ObjectTrackingLauncher < handle
         current_frame;
         current_frame_copy;
         
+        frame_height;
+        frame_width;
+        
         %Algorithm variables
         phi; %level set function
         Fd; %evolution speed
@@ -50,6 +53,10 @@ classdef ObjectTrackingLauncher < handle
             axes(this.handles.axes_image);
             image(this.current_frame,'Parent',this.handles.axes_image);
             clean_axes(this.handles.axes_image);
+            
+            
+            this.frame_height = size(this.current_frame, 1);
+            this.frame_width = size(this.current_frame, 2);
             
             this.distribution = L1Norm;
             

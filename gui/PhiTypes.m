@@ -6,3 +6,5 @@ classdef PhiTypes < int8
       Interior_pixel (-3)
    end
 end
+
+%use like this: uint8(PhiTypes.Interior_pixel)
