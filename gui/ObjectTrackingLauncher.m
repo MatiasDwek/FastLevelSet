@@ -43,8 +43,13 @@ classdef ObjectTrackingLauncher < handle
             %set(this.handles.uitable_H1,'Data',data);
             %set(this.handles.uitable_H1, 'RowName', {'', '', ''}, 'ColumnName', {'', '', ''});
             
-            this.filename = 'SampleVideoBunny.mp4';
+            this.filename = 'LeBallonRouge.mp4';
             this.videofile = VideoReader(this.filename);
+            
+            for ii = 1:80
+                this.current_frame = readFrame(this.videofile);
+            end
+            
             
             if hasFrame(this.videofile)
                 this.current_frame = readFrame(this.videofile);
@@ -102,7 +107,7 @@ classdef ObjectTrackingLauncher < handle
             end_pos = round(this.click_position_end);
             this.current_frame_copy = this.current_frame;
             
-            line_width = 3;
+            line_width = 1;
             %Lin
             this.current_frame_copy(start_pos(2):start_pos(2)+line_width, start_pos(1):end_pos(1), :) = 255; %|o
             this.current_frame_copy(end_pos(2)-line_width:end_pos(2), start_pos(1):end_pos(1), :) = 255; %o|
@@ -149,9 +154,26 @@ classdef ObjectTrackingLauncher < handle
         function radiobutton_gaussian(this, varargin)
             this.distribution = Gaussian;
         end
-       
+        
         function pushbutton_iterate_callback(this, varargin)
+            for it3 = 1:1
             IterationStep(this);
+            
+            this.current_frame_copy = this.current_frame;
+            for it1 = 1:this.frame_height
+                for it2 = 1:this.frame_width
+                    if this.Lin(it1, it2) == 1
+                        this.current_frame_copy(it1, it2, :) = 255;
+                    elseif this.Lout(it1, it2) == 1
+                        this.current_frame_copy(it1, it2, :) = 0;
+                    end
+                end
+            end
+            
+            image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+            clean_axes(this.handles.axes_image);
+            pause(.1)
+            end
         end
     end
     methods (Static)
@@ -162,3 +184,17 @@ classdef ObjectTrackingLauncher < handle
     end
 end
 
+% for it1 = 1:this.frame_height
+%     for it2 = 1:this.frame_width
+%         if this.Lin(it1, it2) == 1
+%             if this.phi(it1, it2) ~= -1
+%                 disp('s');
+%             end
+%         end
+%         if this.Lout(it1, it2) == 1
+%             if this.phi(it1, it2) ~= 1
+%                 disp('a');
+%             end
+%         end
+%     end
+% end

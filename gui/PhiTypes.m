@@ -7,4 +7,4 @@ classdef PhiTypes < int8
    end
 end
 
-%use like this: uint8(PhiTypes.Interior_pixel)
+%use like this: int8(PhiTypes.Interior_pixel)

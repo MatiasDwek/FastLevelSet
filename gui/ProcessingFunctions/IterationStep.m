@@ -6,9 +6,9 @@ image_Lin(:, :, 3) = this.current_frame(:, :, 3) .* uint8(this.Lin); %masking
 image_Lout(:, :, 1) = this.current_frame(:, :, 1) .* uint8(this.Lout); %masking
 image_Lout(:, :, 2) = this.current_frame(:, :, 2) .* uint8(this.Lout); %masking
 image_Lout(:, :, 3) = this.current_frame(:, :, 3) .* uint8(this.Lout); %masking
-image_exterior(:, :, 1) = this.current_frame(:, :, 1) .* uint8(this.phi == int8(PhiTypes.Exterior_pixel)); %masking
-image_exterior(:, :, 2) = this.current_frame(:, :, 2) .* uint8(this.phi == int8(PhiTypes.Exterior_pixel)); %masking
-image_exterior(:, :, 3) = this.current_frame(:, :, 3) .* uint8(this.phi == int8(PhiTypes.Exterior_pixel)); %masking
+% image_exterior(:, :, 1) = this.current_frame(:, :, 1) .* uint8(this.phi == int8(PhiTypes.Exterior_pixel)); %masking
+% image_exterior(:, :, 2) = this.current_frame(:, :, 2) .* uint8(this.phi == int8(PhiTypes.Exterior_pixel)); %masking
+% image_exterior(:, :, 3) = this.current_frame(:, :, 3) .* uint8(this.phi == int8(PhiTypes.Exterior_pixel)); %masking
 image_interior(:, :, 1) = this.current_frame(:, :, 1) .* uint8(this.phi == int8(PhiTypes.Interior_pixel)); %masking
 image_interior(:, :, 2) = this.current_frame(:, :, 2) .* uint8(this.phi == int8(PhiTypes.Interior_pixel)); %masking
 image_interior(:, :, 3) = this.current_frame(:, :, 3) .* uint8(this.phi == int8(PhiTypes.Interior_pixel)); %masking
@@ -50,14 +50,22 @@ for it1 = 1:this.frame_height
     end
 end
 
+
+ones_of_Lout = find(this.Lout);
 %Step 2.2
-for it1 = 1:this.frame_height
-    for it2 = 1:this.frame_width
-        if ((this.Lout(it1, it2) == 1) && (this.Fd(it1, it2) > 0))
+for iter = ones_of_Lout'
+        if this.Fd(iter) > 0
+            [it1, it2] = ind2sub(size(this.Lout), iter);
             SwitchIn(this, it1, it2);
         end
-    end
 end
+% for it1 = 1:this.frame_height
+%     for it2 = 1:this.frame_width
+%         if ((this.Lout(it1, it2) == 1) && (this.Fd(it1, it2) > 0))
+%             SwitchIn(this, it1, it2);
+%         end
+%     end
+% end
 
 %Step 2.3
 for it1 = 1:this.frame_height
@@ -68,7 +76,7 @@ for it1 = 1:this.frame_height
                     if (this.phi(max(it1-1, 1), it2) < 0)
                         if (this.phi(it1, max(it2-1, 1)) < 0)
                             this.Lin(it1, it2) = 0;
-                            this.phi(it1, it2) = uint8(PhiTypes.Interior_pixel);
+                            this.phi(it1, it2) = int8(PhiTypes.Interior_pixel);
                         end
                     end
                 end
@@ -77,14 +85,21 @@ for it1 = 1:this.frame_height
     end
 end
 
+ones_of_Lin = find(this.Lin);
 %Step 2.4
-for it1 = 1:this.frame_height
-    for it2 = 1:this.frame_width
-        if ((this.Lin(it1, it2) == 1) && (this.Fd(it1, it2) < 0))
+for iter = ones_of_Lin'
+        if this.Fd(iter) < 0
+            [it1, it2] = ind2sub(size(this.Lin), iter);
             SwitchOut(this, it1, it2);
         end
-    end
 end
+% for it1 = 1:this.frame_height
+%     for it2 = 1:this.frame_width
+%         if ((this.Lin(it1, it2) == 1) && (this.Fd(it1, it2) < 0))
+%             SwitchOut(this, it1, it2);
+%         end
+%     end
+% end
 
 %Step 2.5
 for it1 = 1:this.frame_height
@@ -95,7 +110,7 @@ for it1 = 1:this.frame_height
                     if (this.phi(max(it1-1, 1), it2) > 0)
                         if (this.phi(it1, max(it2-1, 1)) > 0)
                             this.Lout(it1, it2) = 0;
-                            this.phi(it1, it2) = uint8(PhiTypes.Exterior_pixel);
+                            this.phi(it1, it2) = int8(PhiTypes.Exterior_pixel);
                         end
                     end
                 end
