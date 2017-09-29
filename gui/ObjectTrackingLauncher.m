@@ -156,7 +156,7 @@ classdef ObjectTrackingLauncher < handle
         end
         
         function pushbutton_iterate_callback(this, varargin)
-            for it3 = 1:1
+            for it3 = 1:100
             IterationStep(this);
             
             this.current_frame_copy = this.current_frame;
