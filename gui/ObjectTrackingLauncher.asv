@@ -158,7 +158,6 @@ classdef ObjectTrackingLauncher < handle
         
         function pushbutton_iterate_callback(this, varargin)
             IterationStep(this);
-            GaussianFilterStep(this);
             
             this.current_frame_copy = this.current_frame;
             for it1 = 1:this.frame_height
@@ -177,10 +176,6 @@ classdef ObjectTrackingLauncher < handle
         
         function pushbutton_iterate_multiple_callback(this, varargin)
             for it3 = 1:str2num(get(this.handles.edit_times, 'String'))
-                if StoppingCondition(this)
-                    break
-                end
-                
                 IterationStep(this);
                 
                 this.current_frame_copy = this.current_frame;
@@ -197,6 +192,9 @@ classdef ObjectTrackingLauncher < handle
                 image(this.current_frame_copy, 'Parent', this.handles.axes_image);
                 clean_axes(this.handles.axes_image);
                 
+                if StoppingCondition(this)
+                    break
+                end
                 pause(.01)
                 
             end
