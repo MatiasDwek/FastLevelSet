@@ -22,7 +22,7 @@ function varargout = ObjectTracking(varargin)
 
 % Edit the above text to modify the response to help ObjectTracking
 
-% Last Modified by GUIDE v2.5 21-Sep-2017 15:55:14
+% Last Modified by GUIDE v2.5 13-Oct-2017 09:33:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -153,3 +153,33 @@ function radiobutton_gaussian_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of radiobutton_gaussian
+
+
+% --- Executes on button press in pushbutton_iteratemultiple.
+function pushbutton_iteratemultiple_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_iteratemultiple (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function edit_times_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_times (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_times as text
+%        str2double(get(hObject,'String')) returns contents of edit_times as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit_times_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_times (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

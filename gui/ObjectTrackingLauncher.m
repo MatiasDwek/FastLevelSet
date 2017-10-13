@@ -35,6 +35,7 @@ classdef ObjectTrackingLauncher < handle
             set(this.handles.pushbutton_select,'callback', @this.pushbutton_select_callback);
             set(this.handles.pushbutton_iterate,'callback', @this.pushbutton_iterate_callback);
             set(this.handles.togglebutton_play,'callback', @this.togglebutton_play_callback);
+            set(this.handles.pushbutton_iteratemultiple,'callback', @this.pushbutton_iterate_multiple_callback);
             set(this.handles.radiobutton_l1norm,'callback', @this.radiobutton_l1norm);
             set(this.handles.radiobutton_l2norm,'callback', @this.radiobutton_l2norm);
             set(this.handles.radiobutton_gaussian,'callback', @this.radiobutton_gaussian);
@@ -156,7 +157,6 @@ classdef ObjectTrackingLauncher < handle
         end
         
         function pushbutton_iterate_callback(this, varargin)
-            for it3 = 1:100
             IterationStep(this);
             
             this.current_frame_copy = this.current_frame;
@@ -172,8 +172,46 @@ classdef ObjectTrackingLauncher < handle
             
             image(this.current_frame_copy, 'Parent', this.handles.axes_image);
             clean_axes(this.handles.axes_image);
-            pause(.1)
+        end
+        
+        function pushbutton_iterate_multiple_callback(this, varargin)
+            for it3 = 1:str2num(get(this.handles.edit_times, 'String'))
+                IterationStep(this);
+                
+                this.current_frame_copy = this.current_frame;
+                for it1 = 1:this.frame_height
+                    for it2 = 1:this.frame_width
+                        if this.Lin(it1, it2) == 1
+                            this.current_frame_copy(it1, it2, :) = 255;
+                        elseif this.Lout(it1, it2) == 1
+                            this.current_frame_copy(it1, it2, :) = 0;
+                        end
+                    end
+                end
+                
+                image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+                clean_axes(this.handles.axes_image);
+                pause(.01)
+                
             end
+            
+            GaussianFilterStep(this);
+            
+            this.current_frame_copy = this.current_frame;
+            for it1 = 1:this.frame_height
+                for it2 = 1:this.frame_width
+                    if this.Lin(it1, it2) == 1
+                        this.current_frame_copy(it1, it2, :) = 255;
+                    elseif this.Lout(it1, it2) == 1
+                        this.current_frame_copy(it1, it2, :) = 0;
+                    end
+                end
+            end
+            
+            image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+            clean_axes(this.handles.axes_image);
+            pause(.01)
+            
         end
     end
     methods (Static)

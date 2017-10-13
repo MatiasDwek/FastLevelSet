@@ -42,15 +42,25 @@ ones_of_Lin = find(this.Lin)';
 for iter = ones_of_Lin
     [it1, it2] = ind2sub(size(this.Lin), iter);
     p_in = this.distribution.pdfeval(mu_interior, double(squeeze(image_Lin(it1, it2, :))), size(this.current_frame, 3));
-    p_out = this.distribution.pdfeval(mu_exterior, double(squeeze(image_Lin(it1, it2, :))), size(this.current_frame, 3));
-    this.Fd(it1, it2) = log(p_in/p_out);
+%     p_out = this.distribution.pdfeval(mu_exterior, double(squeeze(image_Lin(it1, it2, :))), size(this.current_frame, 3));
+if abs(p_in - 1) < .1
+    this.Fd(it1, it2) = 1;
+else
+    
+    this.Fd(it1, it2) = -1;
+end
 end
 
 for iter = ones_of_Lout
     [it1, it2] = ind2sub(size(this.Lout), iter);
-    p_in = this.distribution.pdfeval(mu_interior, double(squeeze(image_Lout(it1, it2, :))), size(this.current_frame, 3));
-    p_out = this.distribution.pdfeval(mu_exterior, double(squeeze(image_Lout(it1, it2, :))), size(this.current_frame, 3));
-    this.Fd(it1, it2) = log(p_in/p_out);
+%     p_in = this.distribution.pdfeval(mu_interior, double(squeeze(image_Lout(it1, it2, :))), size(this.current_frame, 3));
+    p_out = this.distribution.pdfeval(mu_interior, double(squeeze(image_Lout(it1, it2, :))), size(this.current_frame, 3));
+%     this.Fd(it1, it2) = log(p_in/p_out);
+if abs(p_out - 1) < .1
+    this.Fd(it1, it2) = 1;
+else
+    this.Fd(it1, it2) = -1;
+end
 end
 
 
