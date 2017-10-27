@@ -25,6 +25,8 @@ classdef ObjectTrackingLauncher < handle
         
         %Algorithm parameters
         distribution;
+        feature;
+        frame_average;
     end
     
     methods
@@ -42,6 +44,8 @@ classdef ObjectTrackingLauncher < handle
             set(this.handles.radiobutton_l1norm,'callback', @this.radiobutton_l1norm);
             set(this.handles.radiobutton_l2norm,'callback', @this.radiobutton_l2norm);
             set(this.handles.radiobutton_gaussian,'callback', @this.radiobutton_gaussian);
+            set(this.handles.radiobutton_color,'callback', @this.radiobutton_color);
+            set(this.handles.radiobutton_intensity,'callback', @this.radiobutton_intensity);
             
             %data = {'' ; ''; ''};
             %set(this.handles.uitable_H1,'Data',data);
@@ -52,6 +56,8 @@ classdef ObjectTrackingLauncher < handle
             clean_axes(this.handles.axes_image);
             
             this.distribution = L1Norm;
+            
+            this.feature = FeatureVector.Color_t;
             
             this.init = false;
             
@@ -185,6 +191,29 @@ classdef ObjectTrackingLauncher < handle
         
         function radiobutton_gaussian(this, varargin)
             this.distribution = Gaussian;
+        end
+        
+        function radiobutton_color(this, varargin)
+            this.feature = FeatureVector.Color_t;
+        end
+        
+        function radiobutton_intensity(this, varargin)
+            if this.feature ~= FeatureVector.Intensity_t
+                this.feature = FeatureVector.Intensity_t;
+                %Should read 3 or 4 seconds instead of all the file
+                numFrames = 0;
+                this.frame_average = uint32(this.current_frame);
+                while hasFrame(this.videofile) && numFrames < 300
+                    this.current_frame = readFrame(this.videofile);
+                    this.frame_average = this.frame_average + uint32(this.current_frame);
+                    numFrames = numFrames + 1;
+                end
+                this.frame_average = uint8(this.frame_average/numFrames);
+                axes(this.handles.axes_image);
+                image(this.frame_average,'Parent',this.handles.axes_image);
+                clean_axes(this.handles.axes_image);
+            end
+            
         end
         
         function pushbutton_iterate_callback(this, varargin)
