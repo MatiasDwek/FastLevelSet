@@ -22,7 +22,7 @@ function varargout = ObjectTracking(varargin)
 
 % Edit the above text to modify the response to help ObjectTracking
 
-% Last Modified by GUIDE v2.5 13-Oct-2017 09:33:25
+% Last Modified by GUIDE v2.5 27-Oct-2017 11:45:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -183,3 +183,10 @@ function edit_times_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton_open.
+function pushbutton_open_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_open (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

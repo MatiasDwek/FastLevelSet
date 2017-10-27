@@ -1,4 +1,6 @@
 function InitVariables(this)
+this.init = true;
+
 this.Fd = zeros(size(this.current_frame, 1), size(this.current_frame, 2));
 
 this.phi = int8(ones(size(this.current_frame, 1), size(this.current_frame, 2)));

@@ -21,6 +21,8 @@ classdef ObjectTrackingLauncher < handle
         Lin; %neighboring pixels in
         Lout; %neighboring pixels out
         
+        init;
+        
         %Algorithm parameters
         distribution;
     end
@@ -31,6 +33,7 @@ classdef ObjectTrackingLauncher < handle
             this.handles = guihandles(hfig);
             movegui(hfig,'center');
             
+            set(this.handles.pushbutton_open,'callback', @this.pushbutton_open_callback);
             set(this.handles.pushbutton_next,'callback', @this.pushbutton_next_callback);
             set(this.handles.pushbutton_select,'callback', @this.pushbutton_select_callback);
             set(this.handles.pushbutton_iterate,'callback', @this.pushbutton_iterate_callback);
@@ -44,28 +47,38 @@ classdef ObjectTrackingLauncher < handle
             %set(this.handles.uitable_H1,'Data',data);
             %set(this.handles.uitable_H1, 'RowName', {'', '', ''}, 'ColumnName', {'', '', ''});
             
-            this.filename = 'LeBallonRouge.mp4';
-            this.videofile = VideoReader(this.filename);
-            
-            for ii = 1:80
-                this.current_frame = readFrame(this.videofile);
-            end
-            
-            
-            if hasFrame(this.videofile)
-                this.current_frame = readFrame(this.videofile);
-            end
-            
             axes(this.handles.axes_image);
             image(this.current_frame,'Parent',this.handles.axes_image);
             clean_axes(this.handles.axes_image);
             
-            
-            this.frame_height = size(this.current_frame, 1);
-            this.frame_width = size(this.current_frame, 2);
-            
             this.distribution = L1Norm;
             
+            this.init = false;
+            
+        end
+        
+        function pushbutton_open_callback(this, varargin)
+            this.filename = uigetfile('*.mp4');
+            if ~isequal(this.filename,0)
+                this.videofile = VideoReader(this.filename);
+                
+                %             for ii = 1:80
+                %                 this.current_frame = readFrame(this.videofile);
+                %             end
+                
+                
+                if hasFrame(this.videofile)
+                    this.current_frame = readFrame(this.videofile);
+                end
+                
+                axes(this.handles.axes_image);
+                image(this.current_frame,'Parent',this.handles.axes_image);
+                clean_axes(this.handles.axes_image);
+                
+                
+                this.frame_height = size(this.current_frame, 1);
+                this.frame_width = size(this.current_frame, 2);
+            end
         end
         
         % View next frame
@@ -75,7 +88,25 @@ classdef ObjectTrackingLauncher < handle
                 this.current_frame = readFrame(this.videofile);
             end
             
-            image(this.current_frame, 'Parent', this.handles.axes_image);
+            if this.init == true
+                this.current_frame_copy = this.current_frame;
+                for it1 = 1:this.frame_height
+                    for it2 = 1:this.frame_width
+                        if this.Lin(it1, it2) == 1
+                            this.current_frame_copy(it1, it2, :) = 255;
+                        elseif this.Lout(it1, it2) == 1
+                            this.current_frame_copy(it1, it2, :) = 0;
+                        end
+                    end
+                end
+                
+                image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+                clean_axes(this.handles.axes_image);
+            else
+                image(this.current_frame, 'Parent', this.handles.axes_image);
+            end
+            
+            
             clean_axes(this.handles.axes_image);
         end
         
