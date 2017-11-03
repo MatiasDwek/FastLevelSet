@@ -27,6 +27,7 @@ classdef ObjectTrackingLauncher < handle
         distribution;
         feature;
         frame_average;
+        threshold;
     end
     
     methods
@@ -37,6 +38,7 @@ classdef ObjectTrackingLauncher < handle
             
             set(this.handles.pushbutton_open,'callback', @this.pushbutton_open_callback);
             set(this.handles.pushbutton_next,'callback', @this.pushbutton_next_callback);
+            set(this.handles.pushbutton_prev,'callback', @this.pushbutton_prev_callback);
             set(this.handles.pushbutton_select,'callback', @this.pushbutton_select_callback);
             set(this.handles.pushbutton_iterate,'callback', @this.pushbutton_iterate_callback);
             set(this.handles.togglebutton_play,'callback', @this.togglebutton_play_callback);
@@ -58,6 +60,7 @@ classdef ObjectTrackingLauncher < handle
             this.distribution = L1Norm;
             
             this.feature = FeatureVector.Color_t;
+            this.threshold = .1;
             
             this.init = false;
             
@@ -67,12 +70,7 @@ classdef ObjectTrackingLauncher < handle
             this.filename = uigetfile('*.mp4');
             if ~isequal(this.filename,0)
                 this.videofile = VideoReader(this.filename);
-                
-                %             for ii = 1:80
-                %                 this.current_frame = readFrame(this.videofile);
-                %             end
-                
-                
+                          
                 if hasFrame(this.videofile)
                     this.current_frame = readFrame(this.videofile);
                 end
@@ -85,6 +83,14 @@ classdef ObjectTrackingLauncher < handle
                 this.frame_height = size(this.current_frame, 1);
                 this.frame_width = size(this.current_frame, 2);
             end
+             set(this.handles.radiobutton_color, 'Value',  1);
+             this.feature = FeatureVector.Color_t;
+             this.threshold = .1;
+             
+             set(this.handles.radiobutton_l1norm, 'Value',  1);
+             this.distribution = L1Norm;
+             
+             this.init = false;
         end
         
         % View next frame
@@ -113,6 +119,18 @@ classdef ObjectTrackingLauncher < handle
             end
             
             
+            clean_axes(this.handles.axes_image);
+        end
+        
+        function pushbutton_prev_callback(this, varargin)
+            this.videofile = VideoReader(this.filename);
+            
+            if hasFrame(this.videofile)
+                this.current_frame = readFrame(this.videofile);
+            end
+            
+            axes(this.handles.axes_image);
+            image(this.current_frame,'Parent',this.handles.axes_image);
             clean_axes(this.handles.axes_image);
         end
         
@@ -195,15 +213,17 @@ classdef ObjectTrackingLauncher < handle
         
         function radiobutton_color(this, varargin)
             this.feature = FeatureVector.Color_t;
+            this.threshold = .1;
         end
         
         function radiobutton_intensity(this, varargin)
             if this.feature ~= FeatureVector.Intensity_t
+                this.threshold = .13;
                 this.feature = FeatureVector.Intensity_t;
                 %Should read 3 or 4 seconds instead of all the file
                 numFrames = 0;
                 this.frame_average = uint32(this.current_frame);
-                while hasFrame(this.videofile) && numFrames < 300
+                while hasFrame(this.videofile) && numFrames < 5000
                     this.current_frame = readFrame(this.videofile);
                     this.frame_average = this.frame_average + uint32(this.current_frame);
                     numFrames = numFrames + 1;
@@ -213,7 +233,7 @@ classdef ObjectTrackingLauncher < handle
                 image(this.frame_average,'Parent',this.handles.axes_image);
                 clean_axes(this.handles.axes_image);
             end
-            
+            pushbutton_prev_callback(this, varargin);
         end
         
         function pushbutton_iterate_callback(this, varargin)
@@ -237,13 +257,24 @@ classdef ObjectTrackingLauncher < handle
         
         function pushbutton_iterate_multiple_callback(this, varargin)
             for it3 = 1:str2num(get(this.handles.edit_times, 'String'))
-                if StoppingCondition(this)
-                    break
+%                 if StoppingCondition(this)
+%                     break
+%                 end
+                
+                if this.feature == FeatureVector.Intensity_t
+                    this.current_frame_copy = uint8(mean(abs(int8(this.current_frame) - int8(this.frame_average)), 3));
+                    image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+                    clean_axes(this.handles.axes_image);
+                    IterationStep(this, this.current_frame_copy);
+                else
+                    IterationStep(this, this.current_frame);
                 end
                 
-                IterationStep(this);
-                
-                this.current_frame_copy = this.current_frame;
+                if this.feature == FeatureVector.Intensity_t
+                    this.current_frame_copy = uint8(mean(abs(int8(this.current_frame) - int8(this.frame_average)), 3));
+                else
+                    this.current_frame_copy = this.current_frame;
+                end
                 for it1 = 1:this.frame_height
                     for it2 = 1:this.frame_width
                         if this.Lin(it1, it2) == 1
