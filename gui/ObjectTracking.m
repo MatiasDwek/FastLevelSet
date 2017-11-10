@@ -22,7 +22,7 @@ function varargout = ObjectTracking(varargin)
 
 % Edit the above text to modify the response to help ObjectTracking
 
-% Last Modified by GUIDE v2.5 27-Oct-2017 11:45:12
+% Last Modified by GUIDE v2.5 10-Nov-2017 19:40:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -188,5 +188,12 @@ end
 % --- Executes on button press in pushbutton_open.
 function pushbutton_open_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_open (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton_playiterate.
+function pushbutton_playiterate_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_playiterate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

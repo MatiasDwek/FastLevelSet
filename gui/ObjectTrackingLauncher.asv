@@ -15,6 +15,10 @@ classdef ObjectTrackingLauncher < handle
         frame_height;
         frame_width;
         
+        margin;
+        frame_height_margin;
+        frame_width_margin;
+        
         %Algorithm variables
         phi; %level set function
         Fd; %evolution speed
@@ -43,6 +47,7 @@ classdef ObjectTrackingLauncher < handle
             set(this.handles.pushbutton_iterate,'callback', @this.pushbutton_iterate_callback);
             set(this.handles.togglebutton_play,'callback', @this.togglebutton_play_callback);
             set(this.handles.pushbutton_iteratemultiple,'callback', @this.pushbutton_iterate_multiple_callback);
+            set(this.handles.pushbutton_playiterate,'callback', @this.pushbutton_playiterate_callback);
             set(this.handles.radiobutton_l1norm,'callback', @this.radiobutton_l1norm);
             set(this.handles.radiobutton_l2norm,'callback', @this.radiobutton_l2norm);
             set(this.handles.radiobutton_gaussian,'callback', @this.radiobutton_gaussian);
@@ -57,6 +62,8 @@ classdef ObjectTrackingLauncher < handle
             image(this.current_frame,'Parent',this.handles.axes_image);
             clean_axes(this.handles.axes_image);
             
+            this.margin = 10;
+            
             this.distribution = L1Norm;
             
             this.feature = FeatureVector.Color_t;
@@ -64,13 +71,14 @@ classdef ObjectTrackingLauncher < handle
             
             this.init = false;
             
+            
         end
         
         function pushbutton_open_callback(this, varargin)
             this.filename = uigetfile('*.mp4');
             if ~isequal(this.filename,0)
                 this.videofile = VideoReader(this.filename);
-                          
+                
                 if hasFrame(this.videofile)
                     this.current_frame = readFrame(this.videofile);
                 end
@@ -82,11 +90,18 @@ classdef ObjectTrackingLauncher < handle
                 
                 this.frame_height = size(this.current_frame, 1);
                 this.frame_width = size(this.current_frame, 2);
+                
+                this.frame_height_margin = size(this.current_frame, 1) - this.margin;
+                this.frame_width_margin = size(this.current_frame, 2) - this.margin;
             end
-             set(this.handles.radiobutton_color, 'Value',  1);
-             this.feature = FeatureVector.Color_t;
-             this.threshold = .1;
-             
+            set(this.handles.radiobutton_color, 'Value',  1);
+            this.feature = FeatureVector.Color_t;
+            this.threshold = .1;
+            
+            set(this.handles.radiobutton_l1norm, 'Value',  1);
+            this.distribution = L1Norm;
+            
+            this.init = false;
         end
         
         % View next frame
@@ -253,9 +268,9 @@ classdef ObjectTrackingLauncher < handle
         
         function pushbutton_iterate_multiple_callback(this, varargin)
             for it3 = 1:str2num(get(this.handles.edit_times, 'String'))
-%                 if StoppingCondition(this)
-%                     break
-%                 end
+                if StoppingCondition(this)
+                    break
+                end
                 
                 if this.feature == FeatureVector.Intensity_t
                     this.current_frame_copy = uint8(mean(abs(int8(this.current_frame) - int8(this.frame_average)), 3));
@@ -306,6 +321,76 @@ classdef ObjectTrackingLauncher < handle
             pause(.01)
             
         end
+        function pushbutton_playiterate_callback(this, varargin)
+            
+            set(this.handles.togglebutton_stop, 'Value', 0);
+            
+            while (get(this.handles.togglebutton_stop, 'Value') ~= 1)
+                if hasFrame(this.videofile)
+                    this.current_frame = readFrame(this.videofile);
+                end
+                
+                image(this.current_frame, 'Parent', this.handles.axes_image);
+                clean_axes(this.handles.axes_image);
+                pause(.05);
+            
+          set(this.handles.togglebutton_stop, 'Value', 0);
+            for it3 = 1:str2num(get(this.handles.edit_times, 'String'))
+                if StoppingCondition(this)
+                    break
+                end
+                
+                if this.feature == FeatureVector.Intensity_t
+                    this.current_frame_copy = uint8(mean(abs(int8(this.current_frame) - int8(this.frame_average)), 3));
+                    image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+                    clean_axes(this.handles.axes_image);
+                    IterationStep(this, this.current_frame_copy);
+                else
+                    IterationStep(this, this.current_frame);
+                end
+                
+                if this.feature == FeatureVector.Intensity_t
+                    this.current_frame_copy = uint8(mean(abs(int8(this.current_frame) - int8(this.frame_average)), 3));
+                else
+                    this.current_frame_copy = this.current_frame;
+                end
+                for it1 = 1:this.frame_height
+                    for it2 = 1:this.frame_width
+                        if this.Lin(it1, it2) == 1
+                            this.current_frame_copy(it1, it2, :) = 255;
+                        elseif this.Lout(it1, it2) == 1
+                            this.current_frame_copy(it1, it2, :) = 0;
+                        end
+                    end
+                end
+                
+                image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+                clean_axes(this.handles.axes_image);
+                
+                pause(.01)
+                
+            end
+            
+            GaussianFilterStep(this);
+            
+            this.current_frame_copy = this.current_frame;
+            for it1 = 1:this.frame_height
+                for it2 = 1:this.frame_width
+                    if this.Lin(it1, it2) == 1
+                        this.current_frame_copy(it1, it2, :) = 255;
+                    elseif this.Lout(it1, it2) == 1
+                        this.current_frame_copy(it1, it2, :) = 0;
+                    end
+                end
+            end
+            
+            image(this.current_frame_copy, 'Parent', this.handles.axes_image);
+            clean_axes(this.handles.axes_image);
+            pause(.01)
+            
+            end
+        end
+        
     end
     methods (Static)
         InitVariables(this);
