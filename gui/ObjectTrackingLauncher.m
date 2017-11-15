@@ -248,7 +248,7 @@ classdef ObjectTrackingLauncher < handle
         end
         
         function pushbutton_iterate_callback(this, varargin)
-            IterationStep(this);
+            IterationStep(this, this.current_frame);
             GaussianFilterStep(this);
             
             this.current_frame_copy = this.current_frame;
@@ -322,19 +322,15 @@ classdef ObjectTrackingLauncher < handle
             
         end
         function pushbutton_playiterate_callback(this, varargin)
+            itnum = 0;
             
             set(this.handles.togglebutton_stop, 'Value', 0);
             
             while (get(this.handles.togglebutton_stop, 'Value') ~= 1)
-                if hasFrame(this.videofile)
-                    this.current_frame = readFrame(this.videofile);
+                itnum = itnum + 1;
+                if itnum == 2
+                    disp('')
                 end
-                
-                image(this.current_frame, 'Parent', this.handles.axes_image);
-                clean_axes(this.handles.axes_image);
-                pause(.05);
-                
-                set(this.handles.togglebutton_stop, 'Value', 0);
                 while 1
                     if StoppingCondition(this)
                         break
@@ -387,7 +383,11 @@ classdef ObjectTrackingLauncher < handle
                 image(this.current_frame_copy, 'Parent', this.handles.axes_image);
                 clean_axes(this.handles.axes_image);
                 pause(.01)
+                if hasFrame(this.videofile)
+                    this.current_frame = readFrame(this.videofile);
+                end
                 
+                set(this.handles.togglebutton_stop, 'Value', 0);
             end
         end
         
